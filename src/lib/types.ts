@@ -129,10 +129,16 @@ export type ReturnLine = {
   exchangeSku?: string;
 };
 
+export type ReturnMethod = "drop-off" | "pickup";
+
 export type ReturnRequest = {
   id: string;
   orderId: string;
+  email: string;
   createdAt: string;
   status: ReturnStatus;
+  method: ReturnMethod;
   lines: ReturnLine[];
+  /** Amount going back to the original card for "refund" lines. */
+  refund: number;
 };
