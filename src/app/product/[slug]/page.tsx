@@ -75,7 +75,11 @@ export default async function ProductPage({ params }: PageProps<"/product/[slug]
             <div className="flex flex-wrap gap-1.5">
               {product.isNew && <Badge tone="new">New in</Badge>}
               {off > 0 && <Badge tone="sale">−{off}%</Badge>}
-              {product.tryOn && <Badge tone="cobalt">Try-on ready</Badge>}
+              {product.tryOn && (
+                <Link href={`/try-on?product=${product.id}`} className="rounded-full hover:opacity-80">
+                  <Badge tone="cobalt">Try it on →</Badge>
+                </Link>
+              )}
             </div>
             <h1 className="display mt-4 text-5xl md:text-6xl">{product.name}</h1>
             <p className="mt-3 text-muted">{product.tagline}</p>
