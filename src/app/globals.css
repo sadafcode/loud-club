@@ -1,26 +1,97 @@
 @import "tailwindcss";
 
+/* loud club — "Acid Club" palette, used as accents on a premium editorial base */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --lime: #c6f432;
+  --cobalt: #2b3fff;
+  --signal: #ff5a1f;
+  --ink: #0e0e10;
+  --concrete: #eceae4;
+
+  --paper: #f6f5f1;
+  --stone: #dcd9d1;
+  --muted: #6d6b66;
+  --line: rgb(14 14 16 / 0.12);
+
+  --background: var(--paper);
+  --foreground: var(--ink);
 }
 
 @theme inline {
+  --color-lime: var(--lime);
+  --color-cobalt: var(--cobalt);
+  --color-signal: var(--signal);
+  --color-ink: var(--ink);
+  --color-concrete: var(--concrete);
+  --color-paper: var(--paper);
+  --color-stone: var(--stone);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-instrument-serif);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* Page gutter shared by every section. */
+@utility gutter {
+  margin-inline: auto;
+  width: 100%;
+  max-width: 1480px;
+  padding-inline: 1rem;
+  @media (width >= 48rem) {
+    padding-inline: 2rem;
   }
+  @media (width >= 80rem) {
+    padding-inline: 3rem;
+  }
+}
+
+/* Small uppercase label — section kickers, meta, badges. */
+@utility eyebrow {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* Editorial serif headline. */
+@utility display {
+  font-family: var(--font-instrument-serif), Georgia, serif;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 0.95;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+::selection {
+  background: var(--lime);
+  color: var(--ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--cobalt);
+  outline-offset: 2px;
+}
+
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
