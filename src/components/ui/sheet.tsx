@@ -2,8 +2,11 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
-import { useEffect, useRef, type ReactNode } from "react";
+import { useRef, type ReactNode } from "react";
+import { createPortal } from "react-dom";
 import { cn } from "@/lib/cn";
+import { useDialog } from "@/lib/use-dialog";
+import { useHydrated } from "@/lib/use-hydrated";
 
 type Side = "right" | "left" | "top";
 
@@ -21,7 +24,10 @@ const OFFSCREEN: Record<Side, { x?: string; y?: string }> = {
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
-/** Modal side panel: overlay, Esc/overlay to close, scroll lock, focus restore. */
+/**
+ * Modal side panel: overlay, Esc/overlay to close, scroll lock, focus restore.
+ * Portalled to <body> so sticky/transformed ancestors can't trap it under the header.
+ */
 export function Sheet({
   open,
   onClose,
@@ -40,24 +46,13 @@ export function Sheet({
   children: ReactNode;
 }) {
   const panelRef = useRef<HTMLDivElement>(null);
+  const hydrated = useHydrated();
 
-  useEffect(() => {
-    if (!open) return;
-    const previous = document.activeElement as HTMLElement | null;
-    const { overflow } = document.body.style;
-    document.body.style.overflow = "hidden";
-    panelRef.current?.focus();
+  useDialog(open, onClose, panelRef);
 
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
-    window.addEventListener("keydown", onKey);
-    return () => {
-      document.body.style.overflow = overflow;
-      window.removeEventListener("keydown", onKey);
-      previous?.focus();
-    };
-  }, [open, onClose]);
+  if (!hydrated) return null;
 
-  return (
+  return createPortal(
     <AnimatePresence>
       {open && (
         <div className="fixed inset-0 z-50">
@@ -93,6 +88,7 @@ export function Sheet({
           </motion.div>
         </div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   );
 }

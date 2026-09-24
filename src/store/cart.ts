@@ -11,11 +11,14 @@ type AddResult = { ok: true } | { ok: false; reason: "sold-out" | "limit"; avail
 
 type CartState = {
   items: CartItem[];
+  /** Validated promo code, shared between the bag page and checkout. */
+  promo?: string;
   add: (sku: string, quantity?: number) => AddResult;
   addMany: (skus: string[]) => number;
   setQuantity: (sku: string, quantity: number) => void;
   remove: (sku: string) => void;
   clear: () => void;
+  setPromo: (code: string | undefined) => void;
 };
 
 export const useCart = create<CartState>()(
@@ -51,7 +54,9 @@ export const useCart = create<CartState>()(
 
       remove: (sku) => set((s) => ({ items: s.items.filter((i) => i.sku !== sku) })),
 
-      clear: () => set({ items: [] }),
+      clear: () => set({ items: [], promo: undefined }),
+
+      setPromo: (promo) => set({ promo }),
     }),
     { name: "loud-club-cart" },
   ),

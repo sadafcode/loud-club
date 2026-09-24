@@ -93,6 +93,19 @@ export type Order = {
   status: OrderStatus;
   lines: OrderLine[];
   shipping: number;
+  /** The fields below are only set on orders placed through checkout. */
+  discount?: number;
+  tax?: number;
+  delivery?: "standard" | "express";
+  customer?: {
+    name: string;
+    address: string;
+    city: string;
+    postcode: string;
+    country: string;
+  };
+  /** Last four digits of the (mock) card. */
+  cardLast4?: string;
 };
 
 export type ReturnReason =

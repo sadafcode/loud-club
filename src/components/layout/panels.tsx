@@ -6,6 +6,7 @@ import { useUI } from "@/store/ui";
 import { CartDrawer } from "./cart-drawer";
 import { MobileMenu } from "./mobile-menu";
 import { SearchOverlay } from "./search-overlay";
+import { StockTicker } from "./stock-ticker";
 import { Toaster } from "./toaster";
 
 /** Global overlays. Any open panel closes when the route changes. */
@@ -24,6 +25,7 @@ export function Panels() {
       <SearchOverlay />
       <MobileMenu />
       <Toaster />
+      <StockTicker />
     </>
   );
 }

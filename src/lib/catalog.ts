@@ -27,6 +27,14 @@ export const CATEGORY_LABELS: Record<Category, string> = {
   footwear: "Footwear",
 };
 
+/** Who a lookbook chapter is styled for. */
+export const LOOK_AUDIENCE: Record<Look["collection"], string> = {
+  girls: "Girls",
+  boys: "Boys",
+  unisex: "Unisex",
+  all: "Everyone",
+};
+
 export type SortKey = "featured" | "newest" | "price-asc" | "price-desc";
 
 export type ProductFilters = {

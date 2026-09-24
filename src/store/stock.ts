@@ -16,9 +16,10 @@ export type StockEvent =
 
 type StockState = {
   overrides: Record<string, number>;
-  /** Shoppers "viewing" each product — pure theatre for the demo. */
-  viewers: Record<string, number>;
   lastEvent?: StockEvent;
+  /** SKUs of the product being viewed — the simulation favours them so changes are visible. */
+  focus: string[];
+  setFocus: (skus: string[]) => void;
   setStock: (sku: string, stock: number) => void;
   /** Take units out of stock (checkout). Returns false if not enough left. */
   reserve: (sku: string, quantity: number) => boolean;
@@ -29,8 +30,10 @@ const baseStock = (sku: string) => findVariant(sku)?.variant.stock ?? 0;
 
 export const useStockStore = create<StockState>()((set, get) => ({
   overrides: {},
-  viewers: {},
   lastEvent: undefined,
+  focus: [],
+
+  setFocus: (focus) => set({ focus }),
 
   setStock: (sku, stock) =>
     set((s) => ({ overrides: { ...s.overrides, [sku]: Math.max(0, stock) } })),
@@ -57,16 +60,21 @@ export const useStockStore = create<StockState>()((set, get) => ({
       return;
     }
 
-    // Otherwise someone, somewhere, buys a low-stock item.
-    const candidates = products.flatMap((p) => p.variants).filter((v) => {
-      const n = current(v.sku);
+    // Otherwise someone buys a low-stock item — usually one on screen.
+    const lowStock = (sku: string) => {
+      const n = current(sku);
       return n > 0 && n <= 6;
-    });
+    };
+    const focused = get().focus.filter(lowStock);
+    const candidates =
+      focused.length && Math.random() < 0.6
+        ? focused
+        : products.flatMap((p) => p.variants.map((v) => v.sku)).filter(lowStock);
     if (!candidates.length) return;
-    const pick = candidates[Math.floor(Math.random() * candidates.length)];
+    const sku = candidates[Math.floor(Math.random() * candidates.length)];
     set({
-      overrides: { ...overrides, [pick.sku]: current(pick.sku) - 1 },
-      lastEvent: { type: "sale", sku: pick.sku, at: Date.now() },
+      overrides: { ...overrides, [sku]: current(sku) - 1 },
+      lastEvent: { type: "sale", sku, at: Date.now() },
     });
   },
 }));
